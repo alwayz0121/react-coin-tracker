@@ -1,8 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useMatch } from "react-router-dom";
 import { Routes, Route, useLocation, useParams } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
 
 const LoaderBox = keyframes`
   0%{
@@ -47,7 +49,7 @@ const Header = styled.header`
 `;
 
 const Title = styled.h1`
-  font-size: 40px;
+  font-size: 2rem;
   color: ${(props) => props.theme.accentColor};
 `;
 
@@ -62,6 +64,7 @@ const OverviewItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 33%;
   span:first-child {
     font-size: 14px;
     font-weight: 400;
@@ -91,6 +94,7 @@ const Tab = styled.span<{ isActive: boolean }>`
   color: ${(props) =>
     props.isActive ? props.theme.accentColor : props.theme.textColor};
   a {
+    padding: 7px 0px;
     display: block;
   }
 `;
@@ -101,9 +105,9 @@ interface RouteState {
   };
 }
 
-//console.log(InfoData) => Store Object as global variable
+//console.log(IInfo) => Store Object as global variable
 // => Object.keys(temp1).join() : key들만 string으로 모으기
-interface InfoData {
+interface IInfo {
   id: string;
   name: string;
   symbol: string;
@@ -123,7 +127,7 @@ interface InfoData {
   first_data_at: string;
   last_data_at: string;
 }
-interface PriceData {
+interface ITickers {
   id: string;
   name: string;
   symbol: string;
@@ -158,67 +162,78 @@ interface PriceData {
 }
 
 function Coin() {
-  const [loading, setLoading] = useState(true);
-  const { coinId } = useParams();
+  const { coinId } = useParams<string>();
   const { state } = useLocation() as RouteState;
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
   //useMatch Hooks : 해당 url에 위치해있는지 확인 : isExact = null/true/false
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
 
-  useEffect(() => {
-    (async () => {
-      //coin에 대한 정보
-      const infoData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
+  const { isLoading: infoLoading, data: infoData } = useQuery<IInfo>(
+    ["info", coinId],
+    () => fetchCoinInfo(coinId)
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<ITickers>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId)
+  );
+  // Without react-query (api.ts 참고)
+  // const [loading, setLoading] = useState(true);
+  // const [info, setInfo] = useState<IInfo>();
+  // const [priceInfo, setPriceInfo] = useState<ITickers>();
 
-      //coin의 가격 정보
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
+  // useEffect(() => {
+  //   (async () => {
+  //     //coin에 대한 정보
+  //     const infoData = await (
+  //       await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+  //     ).json();
 
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
+  //     //coin의 가격 정보
+  //     const priceData = await (
+  //       await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+  //     ).json();
 
+  //     setInfo(infoData);
+  //     setPriceInfo(priceData);
+  //     setLoading(false);
+  //   })();
+  // }, [coinId]);
+
+  const isLoading = infoLoading || tickersLoading;
   return (
     <Container>
       <Header>
         <Title>
-          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+          {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
         </Title>
       </Header>
-      {loading ? (
+      {isLoading ? (
         <Loader></Loader>
       ) : (
         <>
           <Overview>
             <OverviewItem>
-              <span>Rank:</span>
-              <span>{info?.rank}</span>
+              <span>순위</span>
+              <span>{infoData?.rank}위</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Symbol:</span>
-              <span>${info?.symbol}</span>
+              <span>티커</span>
+              <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
+              <span>Open Source</span>
+              <span>{infoData?.open_source ? "Yes" : "No"}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
-              <span>Total Supply:</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>Total Supply</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
 
