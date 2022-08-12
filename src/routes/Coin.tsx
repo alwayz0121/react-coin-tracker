@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import { useMatch } from "react-router-dom";
-import { Routes, Route, useLocation, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useParams,
+  useMatch,
+} from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 
@@ -170,11 +174,14 @@ function Coin() {
 
   const { isLoading: infoLoading, data: infoData } = useQuery<IInfo>(
     ["info", coinId],
-    () => fetchCoinInfo(coinId)
+    () => fetchCoinInfo(coinId) //coinId 인자가 필요하지 않았다면, fetchCoinInfo 만 작성
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<ITickers>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000,
+    }
   );
   // Without react-query (api.ts 참고)
   // const [loading, setLoading] = useState(true);
@@ -202,6 +209,11 @@ function Coin() {
   const isLoading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
@@ -221,8 +233,8 @@ function Coin() {
               <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>가격</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -245,7 +257,7 @@ function Coin() {
               <Link to={`/${coinId}/price`}>Price</Link>
             </Tab>
           </Tabs>
-          <Outlet />
+          <Outlet context={{ coinId, tickersData }} />
         </>
       )}
     </Container>

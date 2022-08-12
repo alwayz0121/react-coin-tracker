@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { fetchCoins } from "../api";
@@ -104,10 +105,14 @@ function Coins() {
   //     setLoading(false);
   //   })();
   // }, []);
+
   return (
     <Container>
+      <Helmet>
+        <title>Coin Tracker</title>
+      </Helmet>
       <Header>
-        <Title>Coin</Title>
+        <Title>Coin Tracker</Title>
       </Header>
       {isLoading ? (
         <Loader></Loader>
