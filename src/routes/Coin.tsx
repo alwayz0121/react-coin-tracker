@@ -39,6 +39,22 @@ const Loader = styled.span`
   animation: ${LoaderBox} 2.5s linear infinite;
 `;
 
+const HomeBtn = styled.div`
+  position: fixed;
+  left: 3vh;
+  top: 3vh;
+  width: 50px;
+  height: 30px;
+  border-radius: 10px;
+  color: ${(props) => props.theme.textColor};
+  background-color: ${(props) => props.theme.subBgColor};
+  a {
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0px 10px;
+  }
+`;
+
 const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
@@ -60,7 +76,7 @@ const Title = styled.h1`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.subBgColor};
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -92,14 +108,17 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.subBgColor};
   padding: 7px 0px;
+  border: 2px solid
+    ${(props) => (props.isActive ? props.theme.accentColor : "transparent")};
   border-radius: 10px;
   color: ${(props) =>
     props.isActive ? props.theme.accentColor : props.theme.textColor};
   a {
     padding: 7px 0px;
     display: block;
+    font-size: 16px;
   }
 `;
 
@@ -214,6 +233,9 @@ function Coin() {
           {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
         </title>
       </Helmet>
+      <HomeBtn>
+        <Link to={"/"}>&larr;</Link>
+      </HomeBtn>
       <Header>
         <Title>
           {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
