@@ -51,7 +51,7 @@ const HomeBtn = styled.div`
   a {
     font-size: 1.5rem;
     font-weight: 700;
-    padding: 0px 10px;
+    padding: 1px 10px;
   }
 `;
 
@@ -234,7 +234,7 @@ function Coin() {
         </title>
       </Helmet>
       <HomeBtn>
-        <Link to={"/"}>&larr;</Link>
+        <Link to="/">&larr;</Link>
       </HomeBtn>
       <Header>
         <Title>
