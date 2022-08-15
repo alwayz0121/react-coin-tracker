@@ -4,6 +4,17 @@ import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { fetchCoins } from "../api";
 
+const ToggleBtn = styled.button`
+  position: fixed;
+  left: 3vh;
+  top: 3vh;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: ${(props) => props.theme.textColor};
+  padding: 5px 10px;
+`;
+
 const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
@@ -90,7 +101,12 @@ interface ICoin {
   type: string;
 }
 
-function Coins() {
+interface ICoinsProps {
+  toggleDark: () => void;
+  isDark: boolean;
+}
+
+function Coins({ toggleDark, isDark }: ICoinsProps) {
   //useQuery는 fetcher 함수를 부른 후, 로딩중이면 isLoading, fetcher함수 끝나면 부른 data.json을 불러옴
   const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
   // Without react-query (api.ts 참고)
@@ -111,8 +127,10 @@ function Coins() {
       <Helmet>
         <title>Coin Tracker</title>
       </Helmet>
+
       <Header>
         <Title>Coin Tracker</Title>
+        <ToggleBtn onClick={toggleDark}>{isDark ? "🌞" : "🌙"}</ToggleBtn>
       </Header>
       {isLoading ? (
         <Loader></Loader>
