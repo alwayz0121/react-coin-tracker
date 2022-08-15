@@ -1,13 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled, { keyframes } from "styled-components";
 import { fetchCoins } from "../api";
+import { isDarkAtom } from "../atoms";
+
+const ToggleBtn = styled.button`
+  position: fixed;
+  left: 3vh;
+  top: 3vh;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: ${(props) => props.theme.textColor};
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+`;
 
 const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
   margin: 0 auto;
+  transition: all 0.5s ease;
 `;
 
 const Header = styled.header`
@@ -91,6 +107,9 @@ interface ICoin {
 }
 
 function Coins() {
+  const isDark = useRecoilValue(isDarkAtom);
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
   //useQuery는 fetcher 함수를 부른 후, 로딩중이면 isLoading, fetcher함수 끝나면 부른 data.json을 불러옴
   const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
   // Without react-query (api.ts 참고)
@@ -113,6 +132,7 @@ function Coins() {
       </Helmet>
       <Header>
         <Title>Coin Tracker</Title>
+        <ToggleBtn onClick={toggleDarkAtom}>{isDark ? "🌞" : "🌙"}</ToggleBtn>
       </Header>
       {isLoading ? (
         <Loader></Loader>

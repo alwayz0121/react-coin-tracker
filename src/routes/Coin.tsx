@@ -39,19 +39,18 @@ const Loader = styled.span`
   animation: ${LoaderBox} 2.5s linear infinite;
 `;
 
-const HomeBtn = styled.div`
+const HomeBtn = styled.button`
   position: fixed;
   left: 3vh;
   top: 3vh;
-  width: 50px;
   height: 30px;
+  border: none;
   border-radius: 10px;
   color: ${(props) => props.theme.textColor};
   background-color: ${(props) => props.theme.subBgColor};
   a {
-    font-size: 1.5rem;
-    font-weight: 700;
-    padding: 1px 10px;
+    font-size: 1rem;
+    padding: 5px 10px;
   }
 `;
 
@@ -59,6 +58,7 @@ const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
   margin: 0 auto;
+  transition: all 0.5s ease;
 `;
 
 const Header = styled.header`
@@ -233,12 +233,12 @@ function Coin() {
           {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
         </title>
       </Helmet>
-      <HomeBtn>
-        <Link to="/">&larr;</Link>
-      </HomeBtn>
       <Header>
         <Title>
           {state?.name ? state.name : isLoading ? "Loading..." : infoData?.name}
+          <HomeBtn>
+            <Link to="/">&larr;</Link>
+          </HomeBtn>
         </Title>
       </Header>
       {isLoading ? (
