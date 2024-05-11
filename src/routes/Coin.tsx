@@ -193,7 +193,7 @@ function Coin() {
 
   const { isLoading: infoLoading, data: infoData } = useQuery<IInfo>(
     ["info", coinId],
-    () => fetchCoinInfo(coinId) //coinId 인자가 필요하지 않았다면, fetchCoinInfo 만 작성
+    () => fetchCoinInfo(coinId)
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<ITickers>(
     ["tickers", coinId],
@@ -202,28 +202,6 @@ function Coin() {
       refetchInterval: 5000,
     }
   );
-  // Without react-query (api.ts 참고)
-  // const [loading, setLoading] = useState(true);
-  // const [info, setInfo] = useState<IInfo>();
-  // const [priceInfo, setPriceInfo] = useState<ITickers>();
-
-  // useEffect(() => {
-  //   (async () => {
-  //     //coin에 대한 정보
-  //     const infoData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-  //     ).json();
-
-  //     //coin의 가격 정보
-  //     const priceData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-  //     ).json();
-
-  //     setInfo(infoData);
-  //     setPriceInfo(priceData);
-  //     setLoading(false);
-  //   })();
-  // }, [coinId]);
 
   const isLoading = infoLoading || tickersLoading;
   return (
