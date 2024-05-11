@@ -114,6 +114,9 @@ function Coins() {
                 <Icon
                   src={`https://cryptoicon-api.pages.dev/api/icon/${coin.symbol.toLowerCase()}`}
                   alt={coin.name}
+                  onError={(e) => {
+                    e.currentTarget.src = `https://cryptoicon-api.pages.dev/icons/128/color/_no_image_.png`;
+                  }}
                 />
                 {coin.name} &rarr;
               </Link>

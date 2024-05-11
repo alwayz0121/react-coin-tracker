@@ -3,7 +3,7 @@ import Router from "./Router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./theme";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { isDarkAtom } from "./atoms";
 
 //React query에 있는 devtools를 import => 내 캐시에 있는 query를 볼 수 있다
@@ -89,9 +89,8 @@ const ToggleBtn = styled.button`
 `;
 
 function App() {
-  const isDark = useRecoilValue(isDarkAtom);
-  const setDarkAtom = useSetRecoilState(isDarkAtom);
-  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
+  const [isDark, setIsDark] = useRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => setIsDark((prev) => !prev);
 
   return (
     <>
