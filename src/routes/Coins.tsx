@@ -6,19 +6,6 @@ import styled, { keyframes } from "styled-components";
 import { fetchCoins } from "../api";
 import { isDarkAtom } from "../atoms";
 
-const ToggleBtn = styled.button`
-  position: fixed;
-  left: 3vh;
-  top: 3vh;
-  height: 30px;
-  border: none;
-  border-radius: 10px;
-  background-color: ${(props) => props.theme.textColor};
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: all 0.5s ease;
-`;
-
 const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
@@ -96,7 +83,7 @@ const Icon = styled.img`
   margin-right: 12px;
 `;
 
-interface ICoin {
+export interface ICoin {
   id: string;
   name: string;
   symbol: string;
@@ -107,23 +94,7 @@ interface ICoin {
 }
 
 function Coins() {
-  const isDark = useRecoilValue(isDarkAtom);
-  const setDarkAtom = useSetRecoilState(isDarkAtom);
-  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
-  //useQuery는 fetcher 함수를 부른 후, 로딩중이면 isLoading, fetcher함수 끝나면 부른 data.json을 불러옴
   const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
-  // Without react-query (api.ts 참고)
-  // const [coins, setCoins] = useState<ICoin[]>([]);
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const response = await fetch("https://api.coinpaprika.com/v1/coins");
-  //     const json = await response.json();
-  //     setCoins(json.slice(0, 100)); //100개 정보만 가져오기
-  //     setLoading(false);
-  //   })();
-  // }, []);
 
   return (
     <Container>
@@ -132,7 +103,6 @@ function Coins() {
       </Helmet>
       <Header>
         <Title>Coin Tracker</Title>
-        <ToggleBtn onClick={toggleDarkAtom}>{isDark ? "🌞" : "🌙"}</ToggleBtn>
       </Header>
       {isLoading ? (
         <Loader></Loader>
@@ -142,7 +112,7 @@ function Coins() {
             <Coin key={coin.id}>
               <Link to={`/${coin.id}/chart`} state={coin}>
                 <Icon
-                  src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+                  src={`https://cryptoicon-api.pages.dev/api/icon/${coin.symbol.toLowerCase()}`}
                   alt={coin.name}
                 />
                 {coin.name} &rarr;
